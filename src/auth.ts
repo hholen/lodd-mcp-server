@@ -1,11 +1,13 @@
+import { getRequestContext } from "./request-context.js";
+
 export function hasApiKey(): boolean {
-  return !!process.env.LODD_API_KEY;
+  return !!getApiKey();
 }
 
 export function getApiKey(): string {
-  return process.env.LODD_API_KEY || "";
+  return getRequestContext()?.apiKey || process.env.LODD_API_KEY || "";
 }
 
 export function getApiUrl(): string {
-  return process.env.LODD_API_URL || "https://api.lodd.dev";
+  return getRequestContext()?.apiUrl || process.env.LODD_API_URL || "https://api.lodd.dev";
 }

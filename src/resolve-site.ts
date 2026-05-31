@@ -19,7 +19,7 @@ export async function resolveSiteId(siteRef: string): Promise<string> {
   }
 
   // For domain references, use the resolve_site endpoint
-  const normalizedDomain = siteRef.replace(/^www\./, "").replace(/^https?:\/\//, "").replace(/\/.*$/, "");
+  const normalizedDomain = siteRef.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "");
 
   let site: Site;
   try {

@@ -10,7 +10,7 @@ getApiUrl();
 
 const server = new McpServer({
   name: "lodd",
-  version: "0.1.11",
+  version: "0.1.15",
 });
 
 if (hasApiKey()) {

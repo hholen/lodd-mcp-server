@@ -1,7 +1,8 @@
 {
   "name": "@lodd/mcp-server",
-  "version": "0.1.11",
-  "description": "MCP server for Lodd — headless web analytics for agents",
+  "version": "0.1.15",
+  "mcpName": "io.github.hholen/lodd-mcp-server",
+  "description": "MCP server for Lodd \u2014 headless web analytics for agents",
   "type": "module",
   "main": "dist/index.js",
   "exports": {
@@ -47,6 +48,9 @@
   "homepage": "https://lodd.dev",
   "repository": {
     "type": "git",
-    "url": "https://lodd.dev"
+    "url": "git+https://github.com/hholen/lodd-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hholen/lodd-mcp-server/issues"
   }
 }

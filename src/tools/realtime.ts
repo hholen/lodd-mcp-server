@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { queryAnalytics } from "../db.js";
+import { queryAnalytics, withUsageWarning } from "../db.js";
 import { resolveSiteId } from "../resolve-site.js";
 
 export function registerRealtimeTools(server: McpServer) {
@@ -14,7 +14,7 @@ export function registerRealtimeTools(server: McpServer) {
       const siteId = await resolveSiteId(site);
       const data = await queryAnalytics({ site_id: siteId, type: "current_visitors" });
       const result = { site, active_visitors: data ?? 0 };
-      return { content: [{ type: "text", text: JSON.stringify(result) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(result) }]);
     }
   );
 }

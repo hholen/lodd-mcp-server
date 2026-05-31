@@ -38,6 +38,19 @@ describe("parsePeriod", () => {
     assert.equal(range.end.getHours(), 23);
   });
 
+  test("custom range anchors to local midnight (consistent with named periods)", () => {
+    // Named periods use local midnight; custom ranges must too, so the same
+    // calendar day means the same instant regardless of how it was requested.
+    const range = parsePeriod("2026-03-15..2026-03-20");
+    assert.equal(range.start.getHours(), 0);
+    assert.equal(range.start.getMinutes(), 0);
+    assert.equal(range.start.getSeconds(), 0);
+    assert.equal(range.start.getDate(), 15);
+    assert.equal(range.end.getDate(), 20);
+    assert.equal(range.end.getHours(), 23);
+    assert.equal(range.end.getMinutes(), 59);
+  });
+
   test("parses year-long custom range (bug #2 regression)", () => {
     const range = parsePeriod("2025-05-01..2026-05-01");
     assert.equal(range.interval, "day");

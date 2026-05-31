@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { queryAnalytics } from "../db.js";
+import { queryAnalytics, withUsageWarning } from "../db.js";
 import { resolveSiteId } from "../resolve-site.js";
 import { parsePeriod, getPreviousPeriod } from "../date-ranges.js";
 import { filterFields, pickFilters } from "../filters.js";
@@ -52,7 +52,7 @@ export function registerAnalyticsTools(server: McpServer) {
         },
       };
 
-      return { content: [{ type: "text", text: JSON.stringify(result) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(result) }]);
     }
   );
 
@@ -77,7 +77,7 @@ export function registerAnalyticsTools(server: McpServer) {
       if (Array.isArray(annotations) && annotations.length > 0) {
         result.last_annotation = annotations[annotations.length - 1];
       }
-      return { content: [{ type: "text", text: JSON.stringify(result) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(result) }]);
     }
   );
 
@@ -111,7 +111,7 @@ export function registerAnalyticsTools(server: McpServer) {
       if (Array.isArray(annotations) && annotations.length > 0) {
         result.annotations = annotations;
       }
-      return { content: [{ type: "text", text: JSON.stringify(result) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(result) }]);
     }
   );
 
@@ -164,7 +164,7 @@ export function registerAnalyticsTools(server: McpServer) {
         start_date: range.start.toISOString(), end_date: range.end.toISOString(),
         limit: Math.min(Math.max(limit, 1), 1000),
       });
-      return { content: [{ type: "text", text: JSON.stringify(data) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(data) }]);
     }
   );
 }

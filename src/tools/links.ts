@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { callEdgeFunction, queryAnalytics } from "../db.js";
+import { callEdgeFunction, queryAnalytics, withUsageWarning } from "../db.js";
 import { resolveSiteId } from "../resolve-site.js";
 import { parsePeriod } from "../date-ranges.js";
 import { slim } from "../slim.js";
@@ -47,7 +47,7 @@ export function registerLinkTools(server: McpServer) {
         destination_url: data.destination_url,
       };
 
-      return { content: [{ type: "text", text: JSON.stringify(result) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(result) }]);
     }
   );
 
@@ -73,7 +73,7 @@ export function registerLinkTools(server: McpServer) {
       }));
 
       const linksMap = { click_count: "clicks" };
-      return { content: [{ type: "text", text: JSON.stringify(slim(links, linksMap)) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(slim(links, linksMap)) }]);
     }
   );
 
@@ -94,7 +94,7 @@ export function registerLinkTools(server: McpServer) {
         end_date: range.end.toISOString(),
       });
 
-      return { content: [{ type: "text", text: JSON.stringify(result) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(result) }]);
     }
   );
 }

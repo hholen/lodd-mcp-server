@@ -35,4 +35,31 @@ describe("slim", () => {
   test("handles empty array", () => {
     assert.deepEqual(slim([], { page_path: "path" }), []);
   });
+
+  test("passes through nested objects unchanged", () => {
+    const data = { page_path: "/", meta: { title: "Home", tags: ["a", "b"] } };
+    const map = { page_path: "path" };
+    const result = slim(data, map);
+    assert.deepEqual(result, { path: "/", meta: { title: "Home", tags: ["a", "b"] } });
+    // Nested object should be the same reference (shallow rename, not deep copy)
+    assert.equal(result.meta, data.meta);
+  });
+
+  test("handles null values", () => {
+    const data = { page_path: "/", referrer: null };
+    const map = { page_path: "path" };
+    assert.deepEqual(slim(data, map), { path: "/", referrer: null });
+  });
+
+  test("handles null values in array of objects", () => {
+    const data = [
+      { page_path: "/", utm_source: null },
+      { page_path: "/about", utm_source: "twitter" },
+    ];
+    const map = { page_path: "path", utm_source: "source" };
+    assert.deepEqual(slim(data, map), [
+      { path: "/", source: null },
+      { path: "/about", source: "twitter" },
+    ]);
+  });
 });

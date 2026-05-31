@@ -1,0 +1,29 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.hholen/lodd-mcp-server",
+  "description": "Headless web analytics for AI agents. 42 MCP tools for traffic, events, funnels, sessions, and conversions.",
+  "repository": {
+    "url": "https://github.com/hholen/lodd-mcp-server",
+    "source": "github"
+  },
+  "version": "0.1.15",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@lodd/mcp-server",
+      "version": "0.1.15",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "description": "Lodd API key. Get one at https://lodd.dev",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": true,
+          "name": "LODD_API_KEY"
+        }
+      ]
+    }
+  ]
+}

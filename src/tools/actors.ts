@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { queryAnalytics } from "../db.js";
+import { queryAnalytics, withUsageWarning } from "../db.js";
 import { resolveSiteId } from "../resolve-site.js";
 import { parsePeriod } from "../date-ranges.js";
 import { slim } from "../slim.js";
@@ -23,7 +23,7 @@ export function registerActorTools(server: McpServer) {
         limit: Math.min(Math.max(limit, 1), 1000),
       });
       const actorsMap = { event_count: "events", total_revenue: "revenue" };
-      return { content: [{ type: "text", text: JSON.stringify(slim(data as Record<string, unknown>[], actorsMap)) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(slim(data as Record<string, unknown>[], actorsMap)) }]);
     }
   );
 
@@ -45,7 +45,7 @@ export function registerActorTools(server: McpServer) {
         start_date: range.start.toISOString(), end_date: range.end.toISOString(),
         limit: Math.min(Math.max(limit, 1), 1000),
       });
-      return { content: [{ type: "text", text: JSON.stringify(data) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(data) }]);
     }
   );
 
@@ -63,7 +63,7 @@ export function registerActorTools(server: McpServer) {
         site_id: siteId, type: "actor_retention",
         start_date: range.start.toISOString(), end_date: range.end.toISOString(),
       });
-      return { content: [{ type: "text", text: JSON.stringify(data) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(data) }]);
     }
   );
 }

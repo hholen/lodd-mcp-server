@@ -11,6 +11,7 @@ import { registerConversionTools } from "./tools/conversions.js";
 import { registerKeyTools } from "./tools/keys.js";
 import { registerActorTools } from "./tools/actors.js";
 import { registerAnnotationTools } from "./tools/annotations.js";
+import { registerSessionTools } from "./tools/sessions.js";
 
 export function registerAllTools(server: McpServer) {
   registerSiteTools(server);
@@ -24,6 +25,8 @@ export function registerAllTools(server: McpServer) {
   registerKeyTools(server);
   registerActorTools(server);
   registerAnnotationTools(server);
+  registerSessionTools(server);
 }
 
 export { registerSignupTools };
+export { runWithRequestContext } from "./request-context.js";

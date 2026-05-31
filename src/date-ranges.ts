@@ -42,12 +42,16 @@ export function parsePeriod(period: string): DateRange {
     }
 
     default: {
-      // Try "YYYY-MM-DD..YYYY-MM-DD" format
+      // Try "YYYY-MM-DD..YYYY-MM-DD" format. Build the dates from the parsed
+      // parts so they anchor to the same (host) timezone as the named periods
+      // above — `new Date("YYYY-MM-DD")` would parse as UTC midnight, making
+      // custom ranges inconsistent with "today"/"7d" off-UTC.
       const match = period.match(/^(\d{4}-\d{2}-\d{2})\.\.(\d{4}-\d{2}-\d{2})$/);
       if (match) {
-        const start = new Date(match[1]);
-        const end = new Date(match[2]);
-        end.setHours(23, 59, 59, 999);
+        const [ys, ms, ds] = match[1].split("-").map(Number);
+        const [ye, me, de] = match[2].split("-").map(Number);
+        const start = new Date(ys, ms - 1, ds);
+        const end = new Date(ye, me - 1, de, 23, 59, 59, 999);
         const days = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
         return { start, end, interval: days <= 2 ? "hour" : "day" };
       }

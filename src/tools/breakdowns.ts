@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { queryAnalytics } from "../db.js";
+import { queryAnalytics, withUsageWarning } from "../db.js";
 import { resolveSiteId } from "../resolve-site.js";
 import { parsePeriod } from "../date-ranges.js";
 import { filterFields, pickFilters } from "../filters.js";
@@ -39,7 +39,7 @@ export function registerBreakdownTools(server: McpServer) {
         filter_referrer_contains: filters.filter_referrer_contains || null,
       });
       const pagesMap = { page_title: "title", page_views: "views", unique_visitors: "visitors", average_duration: "avg_duration" };
-      return { content: [{ type: "text", text: JSON.stringify(slim(data as any[], pagesMap)) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(slim(data as any[], pagesMap)) }]);
     }
   );
 
@@ -63,7 +63,7 @@ export function registerBreakdownTools(server: McpServer) {
         ...filterQuery,
       });
       const sourcesMap = { page_views: "views", unique_visitors: "visitors", click_count: "clicks" };
-      return { content: [{ type: "text", text: JSON.stringify(slim(data as any[], sourcesMap)) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(slim(data as any[], sourcesMap)) }]);
     }
   );
 
@@ -91,7 +91,7 @@ export function registerBreakdownTools(server: McpServer) {
         ...filterQuery,
       });
       const countriesMap = { page_views: "views", unique_visitors: "visitors" };
-      return { content: [{ type: "text", text: JSON.stringify(slim(data as any[], countriesMap)) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(slim(data as any[], countriesMap)) }]);
     }
   );
 
@@ -126,7 +126,7 @@ export function registerBreakdownTools(server: McpServer) {
 
       const techMap = { page_views: "views", unique_visitors: "visitors", device_type: "device" };
       const result = { browsers: slim(browsers as any[], techMap), operating_systems: slim(os as any[], techMap), devices: slim(devices as any[], techMap) };
-      return { content: [{ type: "text", text: JSON.stringify(result) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(result) }]);
     }
   );
 
@@ -150,7 +150,7 @@ export function registerBreakdownTools(server: McpServer) {
         ...filterQuery,
       });
       const entryExitMap = { page_views: "views", unique_visitors: "visitors" };
-      return { content: [{ type: "text", text: JSON.stringify(slim(data as any[], entryExitMap)) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(slim(data as any[], entryExitMap)) }]);
     }
   );
 
@@ -170,7 +170,7 @@ export function registerBreakdownTools(server: McpServer) {
         start_date: range.start.toISOString(), end_date: range.end.toISOString(),
         limit: Math.min(Math.max(limit, 1), 1000),
       });
-      return { content: [{ type: "text", text: JSON.stringify(data) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(data) }]);
     }
   );
 }

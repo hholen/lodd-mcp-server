@@ -264,3 +264,255 @@ describe("annotation tools", () => {
     assert.ok(schema.period, "has period param");
   });
 });
+
+describe("site sharing tools", () => {
+  test("share_site is registered with site and email", async () => {
+    const server = createMockServer();
+    const { registerSiteTools } = await import("../dist/tools/sites.js");
+    registerSiteTools(server);
+
+    assert.ok(server.tools.share_site, "share_site registered");
+    const schema = server.tools.share_site.schema;
+    assert.ok(schema.site, "has site param");
+    assert.ok(schema.email, "has email param");
+  });
+
+  test("list_members is registered with site", async () => {
+    const server = createMockServer();
+    const { registerSiteTools } = await import("../dist/tools/sites.js");
+    registerSiteTools(server);
+
+    assert.ok(server.tools.list_members, "list_members registered");
+    const schema = server.tools.list_members.schema;
+    assert.ok(schema.site, "has site param");
+  });
+
+  test("remove_member is registered with site and email", async () => {
+    const server = createMockServer();
+    const { registerSiteTools } = await import("../dist/tools/sites.js");
+    registerSiteTools(server);
+
+    assert.ok(server.tools.remove_member, "remove_member registered");
+    const schema = server.tools.remove_member.schema;
+    assert.ok(schema.site, "has site param");
+    assert.ok(schema.email, "has email param");
+  });
+});
+
+describe("session analytics tools", () => {
+  test("get_session_paths is registered with expected params", async () => {
+    const server = createMockServer();
+    const { registerSessionTools } = await import("../dist/tools/sessions.js");
+    registerSessionTools(server);
+
+    assert.ok(server.tools.get_session_paths, "get_session_paths registered");
+    const schema = server.tools.get_session_paths.schema;
+    assert.ok(schema.site, "has site param");
+    assert.ok(schema.period, "has period param");
+    assert.ok(schema.limit, "has limit param");
+    assert.ok(schema.min_sessions, "has min_sessions param");
+    assert.ok(schema.max_steps, "has max_steps param");
+  });
+
+  test("get_dropoff_destinations requires from_url", async () => {
+    const server = createMockServer();
+    const { registerSessionTools } = await import("../dist/tools/sessions.js");
+    registerSessionTools(server);
+
+    assert.ok(server.tools.get_dropoff_destinations, "get_dropoff_destinations registered");
+    assert.ok(server.tools.get_dropoff_destinations.schema.from_url, "has from_url param");
+  });
+
+  test("get_session_scores has optional conversion_event", async () => {
+    const server = createMockServer();
+    const { registerSessionTools } = await import("../dist/tools/sessions.js");
+    registerSessionTools(server);
+
+    assert.ok(server.tools.get_session_scores, "get_session_scores registered");
+    assert.ok(server.tools.get_session_scores.schema.conversion_event, "has conversion_event param");
+  });
+
+  test("get_event_sequences requires target_event", async () => {
+    const server = createMockServer();
+    const { registerSessionTools } = await import("../dist/tools/sessions.js");
+    registerSessionTools(server);
+
+    assert.ok(server.tools.get_event_sequences, "get_event_sequences registered");
+    assert.ok(server.tools.get_event_sequences.schema.target_event, "has target_event param");
+    assert.ok(server.tools.get_event_sequences.schema.lookback_steps, "has lookback_steps param");
+  });
+
+  test("get_content_groups requires groups array", async () => {
+    const server = createMockServer();
+    const { registerSessionTools } = await import("../dist/tools/sessions.js");
+    registerSessionTools(server);
+
+    assert.ok(server.tools.get_content_groups, "get_content_groups registered");
+    assert.ok(server.tools.get_content_groups.schema.groups, "has groups param");
+  });
+
+  test("all session tools have filter support", async () => {
+    const server = createMockServer();
+    const { registerSessionTools } = await import("../dist/tools/sessions.js");
+    registerSessionTools(server);
+
+    for (const toolName of ["get_session_paths", "get_dropoff_destinations", "get_session_scores", "get_event_sequences", "get_content_groups"]) {
+      const schema = server.tools[toolName].schema;
+      for (const key of ["filter_country", "filter_browser", "filter_os", "filter_device_type", "filter_utm_source", "filter_referrer_contains"]) {
+        assert.ok(schema[key], `${toolName} should have ${key}`);
+      }
+    }
+  });
+});
+
+describe("session tools parameter validation", () => {
+  test("get_session_paths: min_sessions has a default of 2", async () => {
+    const server = createMockServer();
+    const { registerSessionTools } = await import("../dist/tools/sessions.js");
+    registerSessionTools(server);
+    const schema = server.tools.get_session_paths.schema;
+
+    assert.equal(schema.min_sessions._def.type, "default", "min_sessions should have a default");
+    assert.equal(schema.min_sessions._def.defaultValue, 2, "default should be 2");
+  });
+
+  test("get_session_paths: max_steps has a default of 10", async () => {
+    const server = createMockServer();
+    const { registerSessionTools } = await import("../dist/tools/sessions.js");
+    registerSessionTools(server);
+    const schema = server.tools.get_session_paths.schema;
+
+    assert.equal(schema.max_steps._def.type, "default", "max_steps should have a default");
+    assert.equal(schema.max_steps._def.defaultValue, 10, "default should be 10");
+  });
+
+  test("get_session_paths: limit has a default of 20", async () => {
+    const server = createMockServer();
+    const { registerSessionTools } = await import("../dist/tools/sessions.js");
+    registerSessionTools(server);
+    const schema = server.tools.get_session_paths.schema;
+
+    assert.equal(schema.limit._def.type, "default", "limit should have a default");
+    assert.equal(schema.limit._def.defaultValue, 20, "default should be 20");
+  });
+
+  test("get_dropoff_destinations: from_url is required (no default, not optional)", async () => {
+    const server = createMockServer();
+    const { registerSessionTools } = await import("../dist/tools/sessions.js");
+    registerSessionTools(server);
+    const schema = server.tools.get_dropoff_destinations.schema;
+
+    assert.equal(schema.from_url.isOptional(), false, "from_url should not be optional");
+    assert.notEqual(schema.from_url._def?.type, "default", "from_url should not have a default");
+  });
+
+  test("get_session_scores: conversion_event is optional", async () => {
+    const server = createMockServer();
+    const { registerSessionTools } = await import("../dist/tools/sessions.js");
+    registerSessionTools(server);
+    const schema = server.tools.get_session_scores.schema;
+
+    assert.equal(schema.conversion_event.isOptional(), true, "conversion_event should be optional");
+  });
+
+  test("get_event_sequences: target_event is required", async () => {
+    const server = createMockServer();
+    const { registerSessionTools } = await import("../dist/tools/sessions.js");
+    registerSessionTools(server);
+    const schema = server.tools.get_event_sequences.schema;
+
+    assert.equal(schema.target_event.isOptional(), false, "target_event should be required");
+  });
+
+  test("get_event_sequences: lookback_steps has a default of 5", async () => {
+    const server = createMockServer();
+    const { registerSessionTools } = await import("../dist/tools/sessions.js");
+    registerSessionTools(server);
+    const schema = server.tools.get_event_sequences.schema;
+
+    assert.equal(schema.lookback_steps._def.type, "default", "lookback_steps should have a default");
+    assert.equal(schema.lookback_steps._def.defaultValue, 5, "default should be 5");
+  });
+
+  test("get_content_groups: groups is required and rejects empty arrays", async () => {
+    const server = createMockServer();
+    const { registerSessionTools } = await import("../dist/tools/sessions.js");
+    registerSessionTools(server);
+    const schema = server.tools.get_content_groups.schema;
+
+    assert.equal(schema.groups.isOptional(), false, "groups should be required");
+    // min(1) means empty arrays are rejected
+    const result = schema.groups.safeParse([]);
+    assert.equal(result.success, false, "empty array should fail validation");
+  });
+});
+
+describe("tool description quality", () => {
+  let allTools;
+
+  test("registers all tools from all tool files", async () => {
+    const server = createMockServer();
+    const { registerAnalyticsTools } = await import("../dist/tools/analytics.js");
+    const { registerBreakdownTools } = await import("../dist/tools/breakdowns.js");
+    const { registerEventTools } = await import("../dist/tools/events.js");
+    const { registerSessionTools } = await import("../dist/tools/sessions.js");
+    const { registerSiteTools } = await import("../dist/tools/sites.js");
+    const { registerConversionTools } = await import("../dist/tools/conversions.js");
+    const { registerKeyTools } = await import("../dist/tools/keys.js");
+    const { registerLinkTools } = await import("../dist/tools/links.js");
+    const { registerRealtimeTools } = await import("../dist/tools/realtime.js");
+    const { registerUsageTools } = await import("../dist/tools/usage.js");
+    const { registerActorTools } = await import("../dist/tools/actors.js");
+    const { registerAnnotationTools } = await import("../dist/tools/annotations.js");
+    const { registerSignupTools } = await import("../dist/tools/signup.js");
+
+    registerAnalyticsTools(server);
+    registerBreakdownTools(server);
+    registerEventTools(server);
+    registerSessionTools(server);
+    registerSiteTools(server);
+    registerConversionTools(server);
+    registerKeyTools(server);
+    registerLinkTools(server);
+    registerRealtimeTools(server);
+    registerUsageTools(server);
+    registerActorTools(server);
+    registerAnnotationTools(server);
+    registerSignupTools(server);
+
+    allTools = server.tools;
+    const toolCount = Object.keys(allTools).length;
+    assert.ok(toolCount >= 30, `Expected at least 30 tools, got ${toolCount}`);
+  });
+
+  test("every tool description is at least 20 characters", async () => {
+    assert.ok(allTools, "tools must be registered first");
+    for (const [name, tool] of Object.entries(allTools)) {
+      assert.ok(
+        typeof tool.description === "string" && tool.description.length >= 20,
+        `${name} description too short (${tool.description?.length ?? 0} chars): "${tool.description}"`
+      );
+    }
+  });
+
+  test("no tool description contains banned word 'genuinely'", async () => {
+    assert.ok(allTools, "tools must be registered first");
+    for (const [name, tool] of Object.entries(allTools)) {
+      assert.ok(
+        !tool.description.toLowerCase().includes("genuinely"),
+        `${name} description contains banned word "genuinely"`
+      );
+    }
+  });
+
+  test("every tool name uses snake_case", async () => {
+    assert.ok(allTools, "tools must be registered first");
+    const snakeCaseRe = /^[a-z][a-z0-9]*(_[a-z0-9]+)*$/;
+    for (const name of Object.keys(allTools)) {
+      assert.ok(
+        snakeCaseRe.test(name),
+        `Tool name "${name}" is not snake_case`
+      );
+    }
+  });
+});

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { queryAnalytics } from "../db.js";
+import { queryAnalytics, withUsageWarning } from "../db.js";
 import { resolveSiteId } from "../resolve-site.js";
 import { parsePeriod } from "../date-ranges.js";
 import { filterFields, pickFilters } from "../filters.js";
@@ -34,7 +34,7 @@ export function registerEventTools(server: McpServer) {
         filter_referrer_contains: filters.filter_referrer_contains || null,
       });
       const eventCountsMap = { unique_sessions: "sessions" };
-      return { content: [{ type: "text", text: JSON.stringify(slim(data as Record<string, unknown>[], eventCountsMap)) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(slim(data as Record<string, unknown>[], eventCountsMap)) }]);
     }
   );
 
@@ -56,7 +56,7 @@ export function registerEventTools(server: McpServer) {
         event_name: event_name || null,
         limit: Math.min(Math.max(limit, 1), 1000),
       });
-      return { content: [{ type: "text", text: JSON.stringify(data) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(data) }]);
     }
   );
 
@@ -82,7 +82,7 @@ export function registerEventTools(server: McpServer) {
         ...filterQuery,
       });
       const eventTsMap = { date_label: "date" };
-      return { content: [{ type: "text", text: JSON.stringify(slim(data as Record<string, unknown>[], eventTsMap)) }] };
+      return withUsageWarning([{ type: "text", text: JSON.stringify(slim(data as Record<string, unknown>[], eventTsMap)) }]);
     }
   );
 }

@@ -63,4 +63,56 @@ export function registerSiteTools(server: McpServer) {
       return { content: [{ type: "text", text: JSON.stringify(data) }] };
     }
   );
+
+  server.tool(
+    "share_site",
+    "Give another user access to a site's analytics. They must have a Lodd account (signed up at lodd.dev). Only the site owner can share. The invited user gets a notification email.",
+    {
+      site: z.string().describe("Site domain or UUID"),
+      email: z.string().email().describe("Email address of the user to invite"),
+    },
+    async ({ site, email }) => {
+      const { resolveSiteId } = await import("../resolve-site.js");
+      const siteId = await resolveSiteId(site);
+      const data = await callEdgeFunction("analytics", {
+        method: "POST",
+        params: { type: "share_site", site_id: siteId },
+        body: { email },
+      });
+      return { content: [{ type: "text", text: JSON.stringify(data) }] };
+    }
+  );
+
+  server.tool(
+    "list_members",
+    "List all users who have access to a site, with their roles (owner or member).",
+    {
+      site: z.string().describe("Site domain or UUID"),
+    },
+    async ({ site }) => {
+      const { resolveSiteId } = await import("../resolve-site.js");
+      const siteId = await resolveSiteId(site);
+      const data = await queryAnalytics({ site_id: siteId, type: "list_members" });
+      return { content: [{ type: "text", text: JSON.stringify(data) }] };
+    }
+  );
+
+  server.tool(
+    "remove_member",
+    "Remove a user's access to a site. Only the site owner can do this. Cannot remove the owner.",
+    {
+      site: z.string().describe("Site domain or UUID"),
+      email: z.string().email().describe("Email address of the user to remove"),
+    },
+    async ({ site, email }) => {
+      const { resolveSiteId } = await import("../resolve-site.js");
+      const siteId = await resolveSiteId(site);
+      const data = await callEdgeFunction("analytics", {
+        method: "POST",
+        params: { type: "remove_member", site_id: siteId },
+        body: { email },
+      });
+      return { content: [{ type: "text", text: JSON.stringify(data) }] };
+    }
+  );
 }

@@ -1,6 +1,6 @@
 # @lodd/mcp-server
 
-Headless web analytics for AI agents. 34 MCP tools covering traffic, events, funnels, conversions, sources, performance, and actor analytics.
+Headless web analytics for AI agents. 42 MCP tools covering traffic, events, funnels, conversions, sources, performance, and actor analytics.
 
 No dashboard. Your agent queries structured JSON directly.
 
@@ -44,7 +44,7 @@ Add `https://api.lodd.dev/mcp` as an MCP connector. OAuth handles auth automatic
 
 ## Tools
 
-34 tools across analytics, breakdowns, events, conversions, actors, annotations, trackable links, and account management. Full reference at [lodd.dev/docs](https://lodd.dev/docs).
+42 tools across analytics, breakdowns, events, conversions, actors, annotations, trackable links, and account management. Full reference at [lodd.dev/docs](https://lodd.dev/docs).
 
 ## REST API
 
