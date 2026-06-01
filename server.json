@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.hholen/lodd-mcp-server",
-  "description": "Headless web analytics for AI agents. 42 MCP tools for traffic, events, funnels, sessions, and conversions.",
+  "description": "First-party web analytics for AI agents. Add a script, query your own traffic over MCP.",
   "repository": {
     "url": "https://github.com/hholen/lodd-mcp-server",
     "source": "github"

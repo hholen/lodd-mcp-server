@@ -2,7 +2,7 @@
   "name": "@lodd/mcp-server",
   "version": "0.1.15",
   "mcpName": "io.github.hholen/lodd-mcp-server",
-  "description": "MCP server for Lodd \u2014 headless web analytics for agents",
+  "description": "First-party web analytics for AI agents. Add a script, query your own traffic over MCP.",
   "type": "module",
   "main": "dist/index.js",
   "exports": {

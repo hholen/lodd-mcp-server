@@ -1,8 +1,8 @@
 # @lodd/mcp-server
 
-Headless web analytics for AI agents. 42 MCP tools covering traffic, events, funnels, conversions, sources, performance, and actor analytics.
+First-party web analytics for AI agents. You add a 2KB script, Lodd collects your site's traffic, and your agent queries your own data over MCP. It's the analytics platform, not a connector to one.
 
-No dashboard. Your agent queries structured JSON directly.
+42 MCP tools covering traffic, events, funnels, conversions, sources, performance, and actor analytics. No dashboard. Your agent queries structured JSON directly.
 
 ## Quick start
 
